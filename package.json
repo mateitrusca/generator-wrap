@@ -4,8 +4,8 @@
   "description": "Wrapper for generators to transform them in coroutines.",
   "main": "index.js",
   "scripts": {
-    "test": "NODE_ENV=test node --harmony --use-strict test/index.js",
-    "test-travis": "NODE_ENV=test node --harmony --use-strict test/index.js"
+    "test": "NODE_ENV=test node --harmony --use-strict tests/index.js",
+    "test-travis": "NODE_ENV=test node --harmony --use-strict tests/index.js"
   },
   "repository": {
     "type": "git",
