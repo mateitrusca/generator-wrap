@@ -1,0 +1,26 @@
+{
+  "name": "generator-wrap",
+  "version": "1.0.0",
+  "description": "Wrapper for generators to transform them in coroutines.",
+  "main": "index.js",
+  "scripts": {
+    "test": "NODE_ENV=test node --harmony --use-strict test/index.js",
+    "test-travis": "NODE_ENV=test node --harmony --use-strict test/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/sqreept/generator-wrap"
+  },
+  "keywords": [
+    "generator",
+    "wrap",
+    "wrapper",
+    "coroutine"
+  ],
+  "author": "Adrian Punga <adrian.punga@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/sqreept/generator-wrap/issues"
+  },
+  "homepage": "https://github.com/sqreept/generator-wrap"
+}
