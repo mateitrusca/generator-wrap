@@ -29,10 +29,10 @@ module.exports = function wrap(genFunc) {
 			var generatorResult = gen.next();
 		} catch(err) {
 			exceptionThrown = true;
-			gen.throw(rejectionError);
+			throw err;
 		}
 		whileAsync(function () {
-			if(generatorResult.done || exceptionThrown) {
+			if(exceptionThrown || generatorResult.done) {
 				return false;
 			}
 			return true;
@@ -44,7 +44,7 @@ module.exports = function wrap(genFunc) {
 						generatorResult = gen.next(promisedValue);
 					} catch(err) {
 						exceptionThrown = true;
-						gen.throw(rejectionError);
+						throw err;
 					}
 				},
 				function (rejectionError) {
