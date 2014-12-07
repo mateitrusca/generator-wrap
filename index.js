@@ -33,7 +33,6 @@ module.exports = function wrap(genFunc) {
 		}
 		whileAsync(function () {
 			if(generatorResult.done || exceptionThrown) {
-				gen.close();
 				return false;
 			}
 			return true;

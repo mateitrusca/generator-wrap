@@ -1,6 +1,6 @@
 {
   "name": "generator-wrap",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Wrapper for generators to transform them in coroutines.",
   "main": "index.js",
   "scripts": {
