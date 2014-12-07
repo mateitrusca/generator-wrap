@@ -17,7 +17,7 @@ module.exports = function wrap(genFunc) {
 
 		function whileAsync(conditionFn, blockFn) {
 			if (conditionFn() === true) {
-				setTimeout(function () {
+				setImmediate(function () {
 					blockFn();
 					whileAsync(conditionFn, blockFn);
 				}, 0);
