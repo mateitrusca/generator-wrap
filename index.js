@@ -24,17 +24,32 @@ module.exports = function wrap(genFunc) {
 			}
 		}
 
-		var possiblePromise = gen.next().value;
+		var exceptionThrown = false;
+		try {
+			var generatorResult = gen.next();
+		} catch(err) {
+			exceptionThrown = true;
+			gen.throw(rejectionError);
+		}
 		whileAsync(function () {
-			return possiblePromise !== undefined;
+			if(generatorResult.done || exceptionThrown) {
+				gen.close();
+				return false;
+			}
+			return true;
 		}, function () {
-			toPromise(possiblePromise).then
+			toPromise(generatorResult.value).then
 			(
-				function (promiseValue) {
-					possiblePromise = gen.next(promiseValue).value;
+				function (promisedValue) {
+					try {
+						generatorResult = gen.next(promisedValue);
+					} catch(err) {
+						exceptionThrown = true;
+						gen.throw(rejectionError);
+					}
 				},
 				function (rejectionError) {
-					possiblePromise = undefined;
+					exceptionThrown = true;
 					gen.throw(rejectionError);
 				}
 			);
