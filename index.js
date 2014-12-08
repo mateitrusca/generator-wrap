@@ -1,7 +1,7 @@
 module.exports = function wrap(genFunc) {
 
 	return function () {
-		var gen = genFunc.apply(this, arguments);
+		let gen = genFunc.apply(this, arguments);
 
 		function toPromise(x) {
 			if (x !== undefined && x !== null && typeof x.then === 'function') {
@@ -15,44 +15,32 @@ module.exports = function wrap(genFunc) {
 			}
 		}
 
-		function whileAsync(conditionFn, blockFn) {
-			if (conditionFn() === true) {
-				setImmediate(function () {
-					blockFn();
-					whileAsync(conditionFn, blockFn);
-				}, 0);
+		function next(err, result) {
+			let generatorResult = undefined;
+			if (err !== undefined) {
+				generatorResult = gen.throw(err);
+			} else {
+				generatorResult = gen.next(result);
+			}
+			if (generatorResult.done === false) {
+				toPromise(generatorResult.value)
+					.then(
+					function (result) {
+						setImmediate(function () {
+							next(undefined, result);
+						});
+					},
+					function (err) {
+						setImmediate(function () {
+							next(err);
+						});
+					}
+				);
 			}
 		}
 
-		var exceptionThrown = false;
-		try {
-			var generatorResult = gen.next();
-		} catch(err) {
-			exceptionThrown = true;
-			throw err;
-		}
-		whileAsync(function () {
-			if(exceptionThrown || generatorResult.done) {
-				return false;
-			}
-			return true;
-		}, function () {
-			toPromise(generatorResult.value).then
-			(
-				function (promisedValue) {
-					try {
-						generatorResult = gen.next(promisedValue);
-					} catch(err) {
-						exceptionThrown = true;
-						throw err;
-					}
-				},
-				function (rejectionError) {
-					exceptionThrown = true;
-					gen.throw(rejectionError);
-				}
-			);
-		});
+		next();
+
 	}
 
 };
