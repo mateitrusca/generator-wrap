@@ -1,14 +1,17 @@
-module.exports = function wrap(genFunc) {
+module.exports = function wrap(generatorFunction) {
 
 	return function () {
-		let gen = genFunc.apply(this, arguments);
 
-		function next(err, result) {
+		// Obtain a generator from the generatorFunction
+		let generator = generatorFunction.apply(this, arguments);
+
+		// Asynchronously loop until the generator completes
+		(function next(error, result) {
 			let generatorResult = undefined;
-			if (err !== undefined) {
-				generatorResult = gen.throw(err);
+			if (error !== undefined) {
+				generatorResult = generator.throw(error);
 			} else {
-				generatorResult = gen.next(result);
+				generatorResult = generator.next(result);
 			}
 			if (generatorResult.done === false) {
 				Promise.resolve(generatorResult.value)
@@ -18,16 +21,14 @@ module.exports = function wrap(genFunc) {
 							next(undefined, result);
 						});
 					},
-					function (err) {
+					function (error) {
 						setImmediate(function () {
-							next(err);
+							next(error);
 						});
 					}
 				);
 			}
-		}
-
-		next();
+		})();
 
 	}
 
