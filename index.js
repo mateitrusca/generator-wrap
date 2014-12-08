@@ -7,11 +7,7 @@ module.exports = function wrap(genFunc) {
 			if (x !== undefined && x !== null && typeof x.then === 'function') {
 				return x;
 			} else {
-				return new Promise(
-					function (resolve) {
-						resolve(x);
-					}
-				);
+				return Promise.resolve(x);
 			}
 		}
 
